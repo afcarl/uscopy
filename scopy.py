@@ -1,14 +1,18 @@
 
 # Some imports
-from __future__ import division
+from __future__ import division, print_function
 import serial, matplotlib.pyplot as plt, numpy as np, json
 
 PIN = 'X2'
-INTERVAL_US = 1000
+INTERVAL_US = 10
 NCOUNT = 100
 
+# List the available ports
+import serial.tools.list_ports
+print([str(port) for port in serial.tools.list_ports.comports()])
+
 # Scoped serial interface object
-with serial.Serial('COM4', 9600, timeout=3) as ser:
+with serial.Serial('/dev/cu.usbmodem1482', 9600, timeout=3) as ser:
     # Send the command to the "oscilloscope" to describe the data we want
     ser.write(PIN+','+str(INTERVAL_US)+','+str(NCOUNT)) # pin name, interval (us), number of measurements
     # Get the data from the "oscilloscope"

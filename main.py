@@ -1,10 +1,32 @@
 # Import some uPython modules
 import utime, pyb
+from array import array
+
 # Import classes from the pyb uPython library
 from pyb import USB_VCP, ADC
 
+from pyb import DAC
+from pyb import LED
+import math
+
+# Turn on the light so you know something is happening
+led = LED(4)
+led.on()
+
+# Write out a sinusoidal curve to channel X5, which is wired via a 
+# female-female jumper to X2
+# --
+# create a buffer containing a sine-wave, using half-word samples
+buf = array('H', 2048 + int(2047 * math.sin(2 * math.pi * i / 128)) for i in range(128))
+dac = DAC(1, bits =12) # Wired to X5
+dac.write_timed(buf, 400 * len(buf), mode=DAC.CIRCULAR)
+
+
+
 # Instatiate the USB serial object
 u = USB_VCP()
+
+u.write('Hello world!!')
 
 # Enter into an infinite loop
 while True:
@@ -13,7 +35,7 @@ while True:
     line = u.readline()
     
     # If there is nothing, line will be None
-    if line is not None:
+    if not line is None and line:
         
         # What you got is a byte object, convert from bytes (binary data) to python string
         line = line.decode('ascii')
